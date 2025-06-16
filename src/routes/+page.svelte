@@ -8,11 +8,14 @@
     let data = $state<Post[]>([]);
     let limit = $state(10);
     let expected = $derived(10);
-    let increment = 5;
+    let increment = 3;
     let offset = $state(0);
+    let loading = $state(true);
 
     // Add data handles fetching more data and adding it to our data array.
     async function addData(amount: number) {
+        loading = true;
+
         // First adjust the offset and limit
         // Since we are adding more data, we need to increase the offset
         offset += amount;
@@ -37,6 +40,8 @@
             console.error("Error fetching posts");
             expected -= amount;
         }
+
+        loading = false;
     }
 
     onMount(() => {
@@ -47,14 +52,14 @@
 
 
 <div class="h-full flex flex-col justify-evenly content-center items-center">
-    <div class="p-2 flex flex-col space-y-2 shrink-0 w-full justify-center">
+    <div class="p-2 flex flex-col space-y-2 shrink-0 w-full justify-center px-4 lg:px-16">
         <h1 class="text-2xl font-bold text-center">Infinite Scroll + Data Load Demo</h1>
         <p class="text-lg font-mono text-center">
             This demo showcases an infinite scroll implementation using Svelte. As you scroll down, more posts are fetched and displayed from a FormAction.
         </p>
     </div>
     <div class="flex grow overflow-hidden w-full">
-        <BentoBox requestMore={() => {addData(increment)}} bind:list={data} />
+        <BentoBox bind:loading requestMore={() => {addData(increment)}} bind:list={data} />
     </div>
 </div>
 
