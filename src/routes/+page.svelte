@@ -50,6 +50,7 @@
     
 </script>
 
+<title>Infinite Scroll w/ Live Data</title>
 
 <div class="h-full flex flex-col justify-evenly content-center items-center">
     <div class="p-2 flex flex-col space-y-2 shrink-0 w-full justify-center px-4 lg:px-16">
