@@ -62,7 +62,9 @@
 	{#if loading}
 		<!-- Simulate 5 items loading... -->
 		{#each Array(5) as _, i (i)}
-			<Bento title="Loading..." body="Fetching more items..." loading={true} />
+			<li>
+				<Bento title="Loading..." body="Fetching more items..." loading={true} />
+			</li>
 		{/each}
 	{/if}
 	<li bind:this={sentinel} style="height: 1px;"></li>
