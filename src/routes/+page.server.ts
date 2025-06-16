@@ -2,7 +2,6 @@ import type { Post } from "../types/post";
 
 export const actions = {
     fetchPosts: async ({ request }) => {
-        // Fetch form data
         const formData = await request.formData();
 
         const limit = formData.get('limit');

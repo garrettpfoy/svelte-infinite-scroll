@@ -7,6 +7,7 @@
 
     let data = $state<Post[]>([]);
     let limit = $state(10);
+    let expected = $derived(10);
     let increment = 5;
     let offset = $state(0);
 
@@ -15,6 +16,7 @@
         // First adjust the offset and limit
         // Since we are adding more data, we need to increase the offset
         offset += amount;
+        expected += amount;
 
         const formData = new FormData();
 
@@ -26,23 +28,18 @@
             body: formData,
         })
 
-        console.log("Response:", response);
-
         const result: ActionResult = deserialize(await response.text());
 
-        console.log("Deserialized data:", result);
-
         if(result.type === "success" && Array.isArray(result.data?.posts)) {
-            console.log("Posts: ", result.data.posts);
             const posts: Post[] = result.data.posts as Post[];
-            data = [...data, ...posts]; // Append new posts to existing data
+            data = [...data, ...posts];
         } else {
             console.error("Error fetching posts");
+            expected -= amount;
         }
     }
 
     onMount(() => {
-        // Initial data fetch
         addData(limit); 
     })
     
@@ -50,13 +47,13 @@
 
 
 <div class="h-full flex flex-col justify-evenly content-center items-center">
-    <div class="flex flex-col space-y-2 shrink-0 w-full justify-center">
-        <h2 class="text-2xl font-bold text-center">Infinite Scroll + Data Load Demo</h2>
+    <div class="p-2 flex flex-col space-y-2 shrink-0 w-full justify-center">
+        <h1 class="text-2xl font-bold text-center">Infinite Scroll + Data Load Demo</h1>
         <p class="text-lg font-mono text-center">
             This demo showcases an infinite scroll implementation using Svelte. As you scroll down, more posts are fetched and displayed from a FormAction.
         </p>
     </div>
-    <div class="flex grow overflow-hidden">
+    <div class="flex grow overflow-hidden w-full">
         <BentoBox requestMore={() => {addData(increment)}} bind:list={data} />
     </div>
 </div>

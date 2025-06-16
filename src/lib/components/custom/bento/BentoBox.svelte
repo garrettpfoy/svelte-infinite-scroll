@@ -1,39 +1,53 @@
 <script lang="ts">
-	import { onDestroy, onMount } from "svelte";
+	import { onMount, onDestroy } from "svelte";
 	import Bento from "./Bento.svelte";
 
-    interface BentoBoxProps {
-        list : any[];
-        requestMore(): void;
-    }
+	// Basic props:
+	//  - list : An array of items to display (should be typed in production)
+	// - requestMore : A function this component calls when it needs more items to display (reached bottom of scroll)
+	interface BentoBoxProps {
+		list: any[];
+		requestMore(): void;
+	}
 
-    let { list = $bindable(), requestMore }: BentoBoxProps = $props();
+	// List must be bound so it displays items upad
+	let { list = $bindable(), requestMore }: BentoBoxProps = $props();
 
-    let listElement = $state<any>(undefined);
+	let sentinel: HTMLElement | null = null;
+	let observer: IntersectionObserver | null = null;
 
-    onMount(() => {
-		if (listElement) {
-			listElement.addEventListener("scroll", function () {
-				if (
-					listElement.scrollTop + listElement.clientHeight >=
-					listElement.scrollHeight
-				) {
-					requestMore();
-				}
-			});
-		}
+	onMount(() => {
+		if (!sentinel) return;
+
+		observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						requestMore();
+					}
+				});
+			},
+			{
+				root: null,
+				rootMargin: "100px",
+				threshold: 0.5
+			}
+		);
+
+		observer.observe(sentinel);
 	});
 
 	onDestroy(() => {
-        if(listElement) {
-            listElement?.removeAllListeners("scroll");
-        }
+		if (observer && sentinel) {
+			observer.unobserve(sentinel);
+			observer.disconnect();
+		}
 	});
-
 </script>
 
-<ul bind:this={listElement} class="h-full w-full overflow-y-auto p-4">
+<ul class="h-full w-full overflow-y-auto p-4">
 	{#each list as item, index (index)}
 		<Bento title={item.title} body={item.body} />
 	{/each}
+	<li bind:this={sentinel} style="height: 1px;"></li>
 </ul>
