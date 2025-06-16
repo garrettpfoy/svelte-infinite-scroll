@@ -20,9 +20,9 @@
         <Skeleton class="my-1 h-8 w-1/2" />
         <Skeleton class="my-1 h-8 w-3/4" />
       {:else}
-        <h3 class="text-lg font-bold mb-1 text-gray-900 dark:text-gray-100">
+        <h2 class="text-lg font-bold mb-1 text-gray-900 dark:text-gray-100">
           {title}
-        </h3>
+        </h2>
         <p class="text-gray-700 dark:text-gray-300">
           {body}
         </p>
